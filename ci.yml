@@ -1,0 +1,29 @@
+
+name: RAG App GitHub Workflow
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  check-app:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Check App File
+        run: |
+          if [ -f index.html ]; then
+            echo "RAG AI Knowledge Assistant file found."
+          else
+            echo "Error: index.html not found."
+            exit 1
+          fi
+
+      - name: Workflow Success
+        run: echo "GitHub Actions check completed successfully!"
