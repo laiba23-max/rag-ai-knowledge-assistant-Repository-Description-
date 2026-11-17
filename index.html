@@ -1,0 +1,640 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG AI Knowledge Assistant</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #0b1020;
+    color: #ffffff;
+    min-height: 100vh;
+}
+
+header {
+    background: #151d35;
+    padding: 22px 6%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #303c5a;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+    color: #a99aff;
+}
+
+.logo span {
+    color: white;
+}
+
+.header-status {
+    color: #70e0a4;
+    font-size: 13px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 35px 20px;
+}
+
+.hero {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.hero h1 {
+    font-size: 34px;
+    margin-bottom: 12px;
+}
+
+.hero h1 span {
+    color: #a99aff;
+}
+
+.hero p {
+    color: #aeb8d0;
+    line-height: 1.7;
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 22px;
+}
+
+.panel {
+    background: #171f36;
+    border: 1px solid #303b5c;
+    border-radius: 15px;
+    padding: 22px;
+}
+
+.panel h2 {
+    color: #b5a5ff;
+    font-size: 19px;
+    margin-bottom: 18px;
+}
+
+.upload-area {
+    border: 2px dashed #7968d5;
+    border-radius: 12px;
+    padding: 30px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.upload-area:hover {
+    background: #222b48;
+}
+
+.upload-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+}
+
+.upload-area p {
+    color: #aeb8d0;
+    font-size: 13px;
+    margin: 10px 0;
+}
+
+button {
+    background: #7968e8;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .3s;
+}
+
+button:hover {
+    background: #9585ff;
+}
+
+button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+#fileInput {
+    display: none;
+}
+
+.file-info {
+    margin-top: 17px;
+    padding: 12px;
+    background: #222d46;
+    border-radius: 8px;
+    color: #82e6ad;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.status {
+    color: #aeb8d0;
+    font-size: 12px;
+    margin-top: 12px;
+    line-height: 1.6;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid #303b5c;
+    margin: 22px 0;
+}
+
+.knowledge-item {
+    background: #222b45;
+    padding: 13px;
+    border-radius: 9px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: #d5d9e8;
+    overflow-wrap: anywhere;
+}
+
+.chat-panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 550px;
+}
+
+.chat-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.chat-heading span {
+    color: #70e0a4;
+    font-size: 12px;
+}
+
+.chat-window {
+    background: #10182b;
+    border-radius: 12px;
+    padding: 17px;
+    flex: 1;
+    min-height: 350px;
+    max-height: 450px;
+    overflow-y: auto;
+}
+
+.message {
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 13px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.message strong {
+    display: block;
+    color: #b9aaff;
+    margin-bottom: 6px;
+}
+
+.message p {
+    color: #e1e5f0;
+    font-size: 14px;
+}
+
+.bot {
+    background: #25334a;
+    margin-right: 35px;
+}
+
+.user {
+    background: #343c68;
+    margin-left: 35px;
+}
+
+.chat-input {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.chat-input input {
+    flex: 1;
+    min-width: 0;
+    background: #10182b;
+    color: white;
+    border: 1px solid #414e70;
+    padding: 14px;
+    border-radius: 9px;
+    outline: none;
+}
+
+.chat-input input:focus {
+    border-color: #9988ff;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 25px;
+}
+
+.feature-card {
+    background: #171f36;
+    border: 1px solid #303b5c;
+    padding: 22px;
+    border-radius: 12px;
+}
+
+.feature-card h3 {
+    color: #b4a5ff;
+    margin-bottom: 10px;
+}
+
+.feature-card p {
+    color: #aeb8d0;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #8894b0;
+    border-top: 1px solid #303b5c;
+    margin-top: 40px;
+    font-size: 13px;
+}
+
+@media(max-width: 800px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+    }
+
+    header {
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .hero h1 {
+        font-size: 27px;
+    }
+}
+
+@media(max-width: 480px) {
+    .chat-input {
+        flex-direction: column;
+    }
+
+    .chat-input button {
+        width: 100%;
+    }
+
+    .bot, .user {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">✦ RAG <span>AI</span></div>
+    <div class="header-status">● AI Knowledge Assistant</div>
+</header>
+
+<div class="container">
+
+    <section class="hero">
+        <h1>Smart <span>Knowledge Assistant</span></h1>
+        <p>
+            Upload documents, retrieve relevant information,
+            and get intelligent AI-powered answers.
+        </p>
+    </section>
+
+    <section class="dashboard">
+
+        <!-- DOCUMENT UPLOAD -->
+
+        <div class="panel">
+
+            <h2>📁 Knowledge Base</h2>
+
+            <label class="upload-area" for="fileInput">
+                <div class="upload-icon">📄</div>
+                <h3>Upload Documents</h3>
+                <p>Choose PDF or TXT files</p>
+                <span class="button-text">
+                    <button type="button">Browse Files</button>
+                </span>
+            </label>
+
+            <input
+                type="file"
+                id="fileInput"
+                accept=".pdf,.txt"
+            >
+
+            <div class="file-info" id="fileInfo">
+                No document uploaded yet.
+            </div>
+
+            <p class="status" id="uploadStatus">
+                Upload a document to start building your knowledge base.
+            </p>
+
+            <hr class="divider">
+
+            <h2>📚 Uploaded Files</h2>
+
+            <div id="knowledgeList">
+                <div class="knowledge-item">
+                    Your uploaded documents will appear here.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- AI CHAT -->
+
+        <div class="panel chat-panel">
+
+            <div class="chat-heading">
+                <h2>🤖 AI Chat Assistant</h2>
+                <span>● Ready</span>
+            </div>
+
+            <div class="chat-window" id="chatWindow">
+
+                <div class="message bot">
+                    <strong>RAG AI Assistant</strong>
+                    <p>
+                        Hello! Welcome to your RAG-based AI Assistant.
+                        Upload your document and ask any question
+                        related to its content.
+                    </p>
+                </div>
+
+            </div>
+
+            <form class="chat-input" id="chatForm">
+
+                <input
+                    type="text"
+                    id="questionInput"
+                    placeholder="Ask something about your documents..."
+                    required
+                >
+
+                <button type="submit" id="sendButton">
+                    Send ➤
+                </button>
+
+            </form>
+
+            <p class="status" id="chatStatus">
+                Ready to answer your questions.
+            </p>
+
+        </div>
+
+    </section>
+
+    <!-- FEATURES -->
+
+    <section class="features">
+
+        <div class="feature-card">
+            <h3>📄 Document Processing</h3>
+            <p>
+                Upload PDF and TXT files to create
+                your own searchable knowledge base.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <h3>🔍 Information Retrieval</h3>
+            <p>
+                Retrieve relevant information from
+                uploaded documents using RAG technology.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <h3>🧠 AI Answer Generation</h3>
+            <p>
+                Generate contextual answers using
+                retrieved information and an AI language model.
+            </p>
+        </div>
+
+    </section>
+
+</div>
+
+<footer>
+    RAG AI Knowledge Assistant | Retrieval-Augmented Generation
+</footer>
+
+<script>
+
+const fileInput = document.getElementById("fileInput");
+const fileInfo = document.getElementById("fileInfo");
+const uploadStatus = document.getElementById("uploadStatus");
+const knowledgeList = document.getElementById("knowledgeList");
+
+const chatForm = document.getElementById("chatForm");
+const questionInput = document.getElementById("questionInput");
+const chatWindow = document.getElementById("chatWindow");
+const chatStatus = document.getElementById("chatStatus");
+const sendButton = document.getElementById("sendButton");
+
+let documentUploaded = false;
+
+// DOCUMENT UPLOAD
+
+fileInput.addEventListener("change", async function() {
+
+    const file = this.files[0];
+
+    if (!file) return;
+
+    const extension = file.name.split(".").pop().toLowerCase();
+
+    if (!["pdf", "txt"].includes(extension)) {
+        uploadStatus.textContent = "Please select a PDF or TXT file.";
+        this.value = "";
+        return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+        uploadStatus.textContent = "File size must be below 10 MB.";
+        this.value = "";
+        return;
+    }
+
+    fileInfo.textContent = "Selected: " + file.name;
+    uploadStatus.textContent = "Processing document...";
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+
+        const response = await fetch("/api/upload", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Upload failed");
+        }
+
+        documentUploaded = true;
+
+        uploadStatus.textContent =
+            "Document uploaded and indexed successfully!";
+
+        const item = document.createElement("div");
+        item.className = "knowledge-item";
+        item.textContent = "📄 " + file.name;
+
+        knowledgeList.appendChild(item);
+
+    } catch (error) {
+
+        documentUploaded = false;
+        uploadStatus.textContent = error.message;
+
+    }
+
+    this.value = "";
+
+});
+
+// DISPLAY CHAT MESSAGES
+
+function addMessage(role, text) {
+
+    const message = document.createElement("div");
+
+    message.className = "message " + role;
+
+    const heading = document.createElement("strong");
+
+    heading.textContent =
+        role === "user" ? "You" : "RAG AI Assistant";
+
+    const paragraph = document.createElement("p");
+
+    paragraph.textContent = text;
+
+    message.appendChild(heading);
+    message.appendChild(paragraph);
+
+    chatWindow.appendChild(message);
+
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+
+}
+
+// SEND QUESTION TO RAG BACKEND
+
+chatForm.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const question = questionInput.value.trim();
+
+    if (!question) return;
+
+    addMessage("user", question);
+
+    questionInput.value = "";
+
+    if (!documentUploaded) {
+
+        addMessage(
+            "bot",
+            "Please upload and index a document before asking questions."
+        );
+
+        return;
+    }
+
+    sendButton.disabled = true;
+
+    chatStatus.textContent =
+        "Searching relevant information and generating answer...";
+
+    try {
+
+        const response = await fetch("/api/chat", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                question: question
+            })
+
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "AI request failed");
+        }
+
+        addMessage("bot", data.answer);
+
+        chatStatus.textContent =
+            "Answer generated successfully.";
+
+    } catch (error) {
+
+        addMessage("bot", error.message);
+
+        chatStatus.textContent =
+            "Unable to connect to the AI backend.";
+
+    } finally {
+
+        sendButton.disabled = false;
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
